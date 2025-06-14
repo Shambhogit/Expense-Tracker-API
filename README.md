@@ -362,10 +362,16 @@ Authorization: Bearer <jwt_token>
 
 ---
 
+**Postman Testing:**
+![Logo](./postmanAPITestingSS.png)
+
+
 ## 📑 API Documentation
 
 Interactive Swagger docs are available at:  
 [http://localhost:3001/api-docs](http://localhost:3001/api-docs)
+
+![Logo](./swaggerDocsSS.png)
 
 ---
 
@@ -397,5 +403,6 @@ Interactive Swagger docs are available at:
     npm start
     ```
 5. Visit [http://localhost:3000/api-docs](http://localhost:3000/api-docs) for API documentation.
+
 
 ---
