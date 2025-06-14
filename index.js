@@ -1,6 +1,7 @@
 import express, { json, urlencoded } from 'express';
 import cors from 'cors';
 import userRouter from './routes/users.routes.js';
+import expenseRouter from './routes/expense.routes.js';
 import connectToDatabase from './database/connectToDatabase.js';
 import env from 'dotenv';
 
@@ -23,6 +24,7 @@ app.use(express.urlencoded({extended:true}));
 
 // Routes
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/expense', expenseRouter);
 
 
 app.listen(PORT, ()=>{
