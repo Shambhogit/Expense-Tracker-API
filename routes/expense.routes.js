@@ -1,5 +1,5 @@
 import express from 'express';
-import { addExpense } from '../controller/expanse.controller.js';
+import { addExpense, getExpenses } from '../controller/expanse.controller.js';
 import { isUserAuthenticated } from '../middleware/auth.middleware.js';
 import { body } from 'express-validator';
 const router = express.Router();
@@ -75,5 +75,5 @@ const inputValidation = [
  */
 
 router.post('/add-expense', isUserAuthenticated, inputValidation, addExpense);
-
+router.get('/get-expenses', isUserAuthenticated, getExpenses);
 export default router;
