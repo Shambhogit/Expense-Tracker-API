@@ -4,22 +4,23 @@ import { isUserAuthenticated } from '../middleware/auth.middleware.js';
 import { body } from 'express-validator';
 const router = express.Router();
 
+
 const inputValidation = [
     body('expenseName')
-        .notEmpty().withMessage('Expense Name is Required')
-        .isLength({ min: 3, max: 30 }).withMessage('Expense Name should be in range of 3 to 30 characters'),
-
+    .notEmpty().withMessage('Expense Name is Required')
+    .isLength({ min: 3, max: 30 }).withMessage('Expense Name should be in range of 3 to 30 characters'),
+    
     body('category')
-        .notEmpty().withMessage('Category is Required')
-        .isLength({ min: 3, max: 30 }).withMessage('Category should be in range of 3 to 30 characters'),
-
+    .notEmpty().withMessage('Category is Required')
+    .isLength({ min: 3, max: 30 }).withMessage('Category should be in range of 3 to 30 characters'),
+    
     body('type')
-        .notEmpty().withMessage('Type is required')
-        .isIn(['income', 'expense']).withMessage('Type must be either "income" or "expense"'),
-
+    .notEmpty().withMessage('Type is required')
+    .isIn(['income', 'expense']).withMessage('Type must be either "income" or "expense"'),
+    
     body('amount')
-        .notEmpty().withMessage('Amount is required')
-        .isNumeric().withMessage('Amount must be a number'),
+    .notEmpty().withMessage('Amount is required')
+    .isNumeric().withMessage('Amount must be a number'),
 ]
 
 /**
@@ -73,6 +74,68 @@ const inputValidation = [
  *       401:
  *         description: Unauthorized
  */
+
+
+/**
+ * @swagger
+ * /api/v1/expense/get-expenses:
+ *   get:
+ *     summary: Get all expenses with optional filters
+ *     description: Returns a list of expenses for the authenticated user with optional filters (category, weeks, date range, and pagination).
+ *     tags:
+ *       - Expense
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: Filter by category (case-insensitive)
+ *         example: Food
+ *       - in: query
+ *         name: from
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter from date (YYYY-MM-DD)
+ *         example: 2025-06-01
+ *       - in: query
+ *         name: to
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter to date (YYYY-MM-DD)
+ *         example: 2025-06-14
+ *       - in: query
+ *         name: weeks
+ *         schema:
+ *           type: integer
+ *         description: Get expenses from past N weeks (1 to 12)
+ *         example: 2
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number for pagination
+ *         example: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Items per page
+ *         example: 10
+ *     responses:
+ *       200:
+ *         description: Successfully returned filtered expense data
+ *       400:
+ *         description: Invalid date or query parameter
+ *       401:
+ *         description: Unauthorized access
+ *       500:
+ *         description: Internal server error
+ */
+
 
 router.post('/add-expense', isUserAuthenticated, inputValidation, addExpense);
 router.get('/get-expenses', isUserAuthenticated, getExpenses);
