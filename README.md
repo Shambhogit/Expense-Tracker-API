@@ -1,9 +1,5 @@
-```markdown
+
 # Expense Tracker API
-
-A full-featured backend API for tracking expenses and incomes, with user authentication, built using **Node.js**, **Express**, **MongoDB (Mongoose)**, and **JWT**. This documentation explains the project structure, dependencies, database configuration, models, middleware, routes, controllers, and provides example API requests and responses.
-
----
 
 ## 📦 Dependencies
 
