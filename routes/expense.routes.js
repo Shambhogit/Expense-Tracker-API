@@ -1,5 +1,5 @@
 import express from 'express';
-import { addExpense, getExpenses } from '../controller/expanse.controller.js';
+import { addExpense, deleteExpense, getExpenses, updateExpense } from '../controller/expanse.controller.js';
 import { isUserAuthenticated } from '../middleware/auth.middleware.js';
 import { body } from 'express-validator';
 const router = express.Router();
@@ -74,6 +74,7 @@ const inputValidation = [
  *       401:
  *         description: Unauthorized
  */
+router.post('/add-expense', isUserAuthenticated, inputValidation, addExpense);
 
 
 /**
@@ -135,8 +136,131 @@ const inputValidation = [
  *       500:
  *         description: Internal server error
  */
-
-
-router.post('/add-expense', isUserAuthenticated, inputValidation, addExpense);
 router.get('/get-expenses', isUserAuthenticated, getExpenses);
+
+/**
+ * @swagger
+ * /api/v1/expense/delete-expense/{id}:
+ *   delete:
+ *     summary: Delete an expense by ID
+ *     description: Deletes a specific expense if it belongs to the authenticated user.
+ *     tags:
+ *       - Expense
+ *     security:
+ *       - bearerAuth: []  # JWT authentication
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the expense to delete
+ *     responses:
+ *       200:
+ *         description: Expense deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Expense Deleted Successfully
+ *       401:
+ *         description: Unauthorized access or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized Access
+ *       404:
+ *         description: Expense not found or user doesn't own the expense
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Expense not found or unauthorized
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
+
+router.delete('/delete-expense/:id', isUserAuthenticated, deleteExpense);
+
+/**
+ * @swagger
+ * /api/v1/expense/update-expense/{id}:
+ *   put:
+ *     summary: Update an existing expense
+ *     tags:
+ *       - Expense
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Expense ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               expenseName:
+ *                 type: string
+ *               amount:
+ *                 type: number
+ *               type:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               paymentMethod:
+ *                 type: string
+ *               note:
+ *                 type: string
+ *               transactionDate:
+ *                 type: string
+ *                 format: date-time
+ *     responses:
+ *       200:
+ *         description: Expense updated successfully
+ *       400:
+ *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Expense not found
+ *       500:
+ *         description: Server error
+ */
+router.put('/update-expense/:id', isUserAuthenticated, updateExpense);
 export default router;

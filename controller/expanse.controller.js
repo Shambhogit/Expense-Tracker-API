@@ -1,6 +1,7 @@
 import { validationResult } from 'express-validator';
 import Expense from '../models/expense.model.js';
 import User from '../models/user.model.js';
+import mongoose from 'mongoose';
 
 async function addExpense(req, res) {
 
@@ -133,8 +134,94 @@ async function getExpenses(req, res) {
     }
 }
 
+async function deleteExpense(req, res) {
+    try {
+        const { id } = req.params;
+        const email = req.user.email;
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ success: false, message: 'Unauthorized Access' });
+        }
+
+        const expense = await Expense.findOneAndDelete({
+            userId: user._id,
+            _id: id
+        });
+
+        if (!expense) {
+            return res.status(404).json({ success: false, message: 'Expense not found or unauthorized' });
+        }
+
+        return res.status(200).json({ success: true, message: 'Expense Deleted Successfully' });
+
+    } catch (error) {
+        console.error(`Error in deleteExpense: ${error.message}`);
+        return res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+}
+
+async function updateExpense(req, res) {
+    try {
+        const { id } = req.params;
+        const email = req.user.email;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: 'Invalid Expense ID' });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ success: false, message: 'Unauthorized User' });
+        }
+
+        const {
+            expenseName,
+            amount,
+            type,
+            category,
+            paymentMethod,
+            note,
+            transactionDate
+        } = req.body;
+
+        if (amount && isNaN(parseFloat(amount))) {
+            return res.status(400).json({ success: false, message: 'Amount must be a valid number' });
+        }
+
+        const updateFields = {};
+        if (expenseName) updateFields.expenseName = expenseName;
+        if (amount) updateFields.amount = parseFloat(amount);
+        if (type) updateFields.type = type;
+        if (category) updateFields.category = category;
+        if (paymentMethod) updateFields.paymentMethod = paymentMethod;
+        if (note) updateFields.note = note;
+        if (transactionDate) updateFields.transactionDate = new Date(transactionDate);
+
+        const updatedExpense = await Expense.findOneAndUpdate(
+            { _id: id, userId: user._id },
+            { $set: updateFields },
+            { new: true }
+        );
+
+        if (!updatedExpense) {
+            return res.status(404).json({ success: false, message: 'Expense not found or unauthorized' });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Expense updated successfully',
+        });
+
+    } catch (error) {
+        console.error(`[updateExpense] Error: ${error.message}`);
+        return res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+}
 
 export {
     addExpense,
     getExpenses,
+    deleteExpense,
+    updateExpense,
 }
