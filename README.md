@@ -1,6 +1,10 @@
 
 # Expense Tracker API
 
+***inspired from Roadmap.sh***
+
+[Roadmap.sh Project Submission link](https://roadmap.sh/projects/expense-tracker-api)
+
 ## 📦 Dependencies
 
 All dependencies are listed in [`package.json`](package.json):
