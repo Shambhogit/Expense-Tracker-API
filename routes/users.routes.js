@@ -3,6 +3,89 @@ import {userLogin, userSignUp} from '../controller/users.controller.js';
 import { body } from 'express-validator';
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/v1/users/create-user:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fullName
+ *               - email
+ *               - password
+ *               - phone
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 minLength: 3
+ *                 maxLength: 50
+ *                 example: John Doe
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: johndoe@example.com
+ *               password:
+ *                 type: string
+ *                 minLength: 8
+ *                 maxLength: 20
+ *                 pattern: '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$'
+ *                 example: Passw0rd123
+ *                 description: Must be 8-20 characters, contain letters and numbers
+ *               phone:
+ *                 type: string
+ *                 pattern: '^\\d{10}$'
+ *                 example: "9876543210"
+ *                 description: 10-digit Indian phone number
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *       409:
+ *         description: User already exists
+ *       422:
+ *         description: Input validation error
+ *       500:
+ *         description: Internal Server Error
+ */
+
+
+/**
+ * @swagger
+ * /api/v1/users/login-user:
+ *   post:
+ *     summary: Login user to the application
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 example: Password123
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       400:
+ *         description: Invalid credentials
+ *       500:
+ *         description: Internal Server Error
+ */
+
+
 const userValidationRulesSignUp = [
   body('fullName')
     .trim()
@@ -36,6 +119,6 @@ const userValidationRulesLogin = [
 ];
 
 router.post('/create-user', userValidationRulesSignUp, userSignUp);
-router.get('/login-user', userValidationRulesLogin, userLogin);
+router.post('/login-user', userValidationRulesLogin, userLogin);
 
 export default router;
